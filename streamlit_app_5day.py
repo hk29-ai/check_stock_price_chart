@@ -2,16 +2,19 @@ import numpy as np
 import altair as alt
 import pandas as pd
 import streamlit as st
+import datetime
+now = datetime.datetime.now()
+now = now.strftime("%y%m%d")
 
 st.header('st.write')
 
 #例1
 
-st.write('Hello, *World!* emoji')
+st.write(now)
 
 #例2
 
-st.write(1234)
+st.write('Hello, *World!* emoji')
 
 #例3
 
