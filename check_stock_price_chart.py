@@ -6,7 +6,7 @@ import pandas_datareader.data as web
 from dateutil import relativedelta
 import matplotlib.pyplot as plt
 from matplotlib import dates as mdates
-import japanize_matplotlib
+#import japanize_matplotlib
 plt.rcParams['font.size'] = 16 # グラフの基本フォントサイズの設定
 import datetime as dt
 now = datetime.datetime.now()
