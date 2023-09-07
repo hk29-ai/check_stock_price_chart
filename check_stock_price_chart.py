@@ -10,9 +10,6 @@ from matplotlib import dates as mdates
 plt.rcParams['font.size'] = 16 # グラフの基本フォントサイズの設定
 import datetime as dt
 
-# 今日の日付
-st.write(now)
-
 # 証券コード
 #ticker_symbol = '3159'
 while True:
@@ -38,7 +35,10 @@ while True:
     if not DF.empty:
         print(DF)
         break
-        
+
+# 今日の日付
+st.write(now)
+
 # データ抽出の区間を表示
 print(target_day)
 print(now)
