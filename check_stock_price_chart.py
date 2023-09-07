@@ -9,8 +9,6 @@ from matplotlib import dates as mdates
 #import japanize_matplotlib
 plt.rcParams['font.size'] = 16 # グラフの基本フォントサイズの設定
 import datetime as dt
-now = datetime.datetime.now()
-now = now.strftime("%y%m%d")
 
 # 今日の日付
 st.write(now)
