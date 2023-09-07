@@ -1,2 +1,2 @@
-# test_streamlit  
+# ランダムに株価チャートをチェックする  
 Streamlitのテスト
