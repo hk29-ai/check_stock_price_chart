@@ -10,6 +10,7 @@ import japanize_matplotlib
 plt.rcParams['font.size'] = 16 # グラフの基本フォントサイズの設定
 import datetime as dt
 
+###################################################### データの読み込み
 # 東証上場銘柄一覧データを読み込む
 df = pd.read_csv('data_j.csv')
 
@@ -45,6 +46,7 @@ df['Ave'] = (df['Open'] + df['High'] + df['Low'] + df['Close']) / 4
 # インデックスでソートする
 DF = df.sort_index(ascending = True)
 
+##################################################### データ処理
 # 価格帯の最小と最大を算出
 min = int(DF['Ave'].min())
 max = int(DF['Ave'].max())
@@ -58,7 +60,6 @@ DF['Category'] = pd.cut(DF['Ave'], my_bins)
 
 #価格別出来高の計算
 my_sum = DF.groupby('Category').sum()
-#label_list = [str(i[0]) + 'a' + str(i[1]) for i in my_sum.index]
 label_list = [str(i) for i in my_sum.index]
 
 # 単純移動平均の計算
@@ -69,10 +70,11 @@ simple_moving_average1 = pd.Series.rolling(DF['Close'], window=my_days1).mean()
 simple_moving_average2 = pd.Series.rolling(DF['Close'], window=my_days2).mean()
 simple_moving_average3 = pd.Series.rolling(DF['Close'], window=my_days3).mean()
 
-# グラフ化
+###################################################### グラフ化
 fig = plt.figure(figsize=(21,9))
 
-ax1 = fig.add_subplot(1, 2, 1)
+# 株価チャートのグラフを描く
+ax1 = fig.add_axes([0.1, 0.1, 0.51, 0.8])  # [左端, 下端, 幅, 高さ]
 ax1.plot(DF['Close'], color="k", lw=3)
 ax1.set_ylabel('株価[￥]')
 ax1.plot(simple_moving_average1, color="r", lw=3, label="移動平均 {} 日".format(my_days1))
@@ -88,7 +90,8 @@ ax1.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing)) # X軸目盛�
 ax1.grid()
 ax1.set_title(f'{ticker_symbol}, {bland}')
 
-ax2 = fig.add_subplot(1, 2, 2)
+# 価格帯別の出来高のグラフを描く
+ax2 = fig.add_axes([0.7, 0.1, 0.2, 0.8])
 ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
