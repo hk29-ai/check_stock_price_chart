@@ -25,7 +25,7 @@ random_No = str(random.randint(1, N))
 data_df = df.iloc[int(random_No)]
 
 st.write("""
-### ■ランダムに選定された株の銘柄
+### ■ランダムに選定した株の銘柄
 """)
 st.table(data_df)
 
@@ -116,7 +116,7 @@ ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
 st.write("""
-### ■チャート情報と価格帯別の出来高
+### ■チャートと価格帯別の出来高
 """)
 st.pyplot(fig)
 
