@@ -23,6 +23,10 @@ random_No = str(random.randint(1, N))
 
 # 株銘柄データを抽出
 data_df = df.iloc[int(random_No)]
+
+st.write("""
+### ■ランダムに選定された株の銘柄
+""")
 st.table(data_df)
 
 # 証券コードと銘柄を取得
@@ -68,7 +72,7 @@ simple_moving_average1 = pd.Series.rolling(DF['Close'], window=my_days1).mean()
 simple_moving_average2 = pd.Series.rolling(DF['Close'], window=my_days2).mean()
 simple_moving_average3 = pd.Series.rolling(DF['Close'], window=my_days3).mean()
 
-##################################################### Prophetによる予測
+##################################################### Prophetによるモデルの作成
 DF2 = DF.copy()
 DF2['ds'] = DF2.index # 日付がインデックスにあるため、列にする
 DF2 = DF2.rename(columns={'Close': 'y'}) # 目的変数の名前をyに置換する
@@ -85,12 +89,6 @@ model = Prophet(
     n_changepoints = 5, # 傾向変化点の数
 ) 
 model.fit(DF2)
-
-# 学習データに予測したい期間を追加する
-future = model.make_future_dataframe(periods = 3, freq='M')
-
-# 予測する
-forecast = model.predict(future)
 
 ###################################################### グラフ化
 fig = plt.figure(figsize=(21,9))
@@ -117,8 +115,25 @@ ax2 = fig.add_axes([0.72, 0.1, 0.15, 0.8])
 ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
+st.write("""
+### ■チャート情報と価格帯別の出来高
+""")
 st.pyplot(fig)
 
-# Prophetによる株価予測を図示
+
+##### Prophetによる株価予測を図示
+st.write("""
+### ■Prophetによる株価予測
+※右端の黒点がないあたりが予測結果です。
+株価の予測についてはこれに限らず、鵜呑みにしないように注意ください。
+""")
+
+# 学習データに予測したい期間を追加する
+future = model.make_future_dataframe(periods = 3, freq='M')
+
+# 予測する
+forecast = model.predict(future)
+
+# プロット
 fig2 = model.plot(forecast)
 st.pyplot(fig2)
