@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import japanize_matplotlib
 plt.rcParams['font.size'] = 24 # グラフの基本フォントサイズの設定
+from prophet import Prophet
 import datetime as dt
 now = dt.datetime.now() # 今日の日付を取得する
 st.write(now)
@@ -67,6 +68,30 @@ simple_moving_average1 = pd.Series.rolling(DF['Close'], window=my_days1).mean()
 simple_moving_average2 = pd.Series.rolling(DF['Close'], window=my_days2).mean()
 simple_moving_average3 = pd.Series.rolling(DF['Close'], window=my_days3).mean()
 
+##################################################### Prophetによる予測
+DF2 = DF.copy()
+DF2['ds'] = DF2.index # 日付がインデックスにあるため、列にする
+DF2 = DF2.rename(columns={'Close': 'y'}) # 目的変数の名前をyに置換する
+
+# モデルの作成
+model = Prophet(
+    growth='linear', # 傾向変動の関数．非線形は'logistic'
+    yearly_seasonality = True, # 年次の季節変動を考慮有無
+    weekly_seasonality = False, # 週次の季節変動を考慮有無
+    daily_seasonality = False, # 日次の季節変動を考慮有無
+    changepoints = None, #  傾向変化点のリスト
+    changepoint_range = 0.85, # 傾向変化点の候補の幅で先頭からの割合。
+    changepoint_prior_scale = 0.5, # 傾向変化点の事前分布のスケール値。パラメータの柔軟性
+    n_changepoints = 5, # 傾向変化点の数
+) 
+model.fit(DF2)
+
+# 学習データに予測したい期間を追加する
+future = model.make_future_dataframe(periods = 3, freq='M')
+
+# 予測する
+forecast = model.predict(future)
+
 ###################################################### グラフ化
 fig = plt.figure(figsize=(21,9))
 
@@ -93,3 +118,7 @@ ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
 st.pyplot(fig)
+
+# Prophetによる株価予測を図示
+fig2 = model.plot(forecast)
+st.pyplot(fig2)
