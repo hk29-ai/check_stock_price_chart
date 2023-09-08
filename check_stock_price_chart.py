@@ -7,8 +7,10 @@ from dateutil import relativedelta
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import japanize_matplotlib
-plt.rcParams['font.size'] = 16 # グラフの基本フォントサイズの設定
+plt.rcParams['font.size'] = 24 # グラフの基本フォントサイズの設定
 import datetime as dt
+now = dt.datetime.now() # 今日の日付を取得する
+st.write(now)
 
 ###################################################### データの読み込み
 # 東証上場銘柄一覧データを読み込む
@@ -17,11 +19,10 @@ df = pd.read_csv('data_j.csv')
 # 銘柄をランダムに選択するため、乱数番号の取得
 N = len(df)
 random_No = str(random.randint(1, N))
-print(f'{random_No}/{N}')
 
-# 乱数番号より株銘柄データを抽出
+# 株銘柄データを抽出
 data_df = df.iloc[int(random_No)]
-data_df
+st.table(data_df)
 
 # 証券コードと銘柄を取得
 ticker_symbol = str(data_df['コード'])
@@ -29,10 +30,6 @@ bland = str(data_df['銘柄名'])
 
 # 何年前からのデータを取得するか
 delta_years = -4
-
-# 今日の日付を取得する
-now = dt.datetime.now()
-st.write(now)
 
 # 今日から数年前の日付を取得する（数か月前の場合は、monthsとする）
 target_day = now + relativedelta.relativedelta(years = delta_years)
@@ -74,7 +71,7 @@ simple_moving_average3 = pd.Series.rolling(DF['Close'], window=my_days3).mean()
 fig = plt.figure(figsize=(21,9))
 
 # 株価チャートのグラフを描く
-ax1 = fig.add_axes([0.1, 0.1, 0.51, 0.8])  # [左端, 下端, 幅, 高さ]
+ax1 = fig.add_axes([0.1, 0.1, 0.5, 0.8])  # [左端, 下端, 幅, 高さ]
 ax1.plot(DF['Close'], color="k", lw=3)
 ax1.set_ylabel('株価[￥]')
 ax1.plot(simple_moving_average1, color="r", lw=3, label="移動平均 {} 日".format(my_days1))
@@ -88,10 +85,10 @@ plt.setp(x_ticklabels, rotation=75) # 目盛り表記を90度回転。#フォン
 tick_spacing = 180 # 目盛り表示する間隔(3か月=90日)
 ax1.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing)) # X軸目盛の表示間隔を間引く
 ax1.grid()
-ax1.set_title(f'{ticker_symbol}, {bland}')
+ax1.set_title(bland)
 
 # 価格帯別の出来高のグラフを描く
-ax2 = fig.add_axes([0.7, 0.1, 0.2, 0.8])
+ax2 = fig.add_axes([0.72, 0.1, 0.15, 0.8])
 ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
