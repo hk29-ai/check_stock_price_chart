@@ -5,125 +5,91 @@ import numpy as np
 import pandas_datareader.data as web
 from dateutil import relativedelta
 import matplotlib.pyplot as plt
-from matplotlib import dates as mdates
-#import japanize_matplotlib
+import matplotlib.ticker as ticker
+import japanize_matplotlib
 plt.rcParams['font.size'] = 16 # グラフの基本フォントサイズの設定
 import datetime as dt
 
-# 証券コード
-#ticker_symbol = '3159'
-while True:
-    ticker_symbol = str(random.randint(1301, 9997))
-    print(ticker_symbol)
+# 東証上場銘柄一覧データを読み込む
+df = pd.read_csv('data_j.csv')
 
-    # 何年前からのデータを取得するか
-    delta_years = -4
+# 銘柄をランダムに選択するため、乱数番号の取得
+N = len(df)
+random_No = str(random.randint(1, N))
+print(f'{random_No}/{N}')
 
-    # 今日の日付を取得する
-    now = dt.datetime.now()
-    # 今日から数年前の日付を取得する（数か月前の場合は、monthsとする）
-    target_day = now + relativedelta.relativedelta(years = delta_years)
+# 乱数番号より株銘柄データを抽出
+data_df = df.iloc[int(random_No)]
+data_df
 
-    # 時系列データを取得する
-    code = ticker_symbol + '.JP'
-    df = web.DataReader(code, 'stooq', target_day, now) # stooq, yahoo
+# 証券コードと銘柄を取得
+ticker_symbol = str(data_df['コード'])
+bland = str(data_df['銘柄名'])
 
-    # インデックスでソートする
-    DF = df.sort_index(ascending = True)
-    
-    # データフレームが空でない場合にループを抜ける
-    if not DF.empty:
-        print(DF)
-        break
+# 何年前からのデータを取得するか
+delta_years = -4
 
-# 今日の日付
+# 今日の日付を取得する
+now = dt.datetime.now()
 st.write(now)
 
-# データ抽出の区間を表示
-print(target_day)
-print(now)
+# 今日から数年前の日付を取得する（数か月前の場合は、monthsとする）
+target_day = now + relativedelta.relativedelta(years = delta_years)
 
-# ATR計算の係数
-atr_period = 10
-atr_multiplier = 2
+# webから時系列データを取得する
+code = ticker_symbol + '.JP'
+df = web.DataReader(code, 'stooq', target_day, now) # stooq, yahoo
 
-high = DF['High']
-low = DF['Low']
-close = DF['Close']
+df['Ave'] = (df['Open'] + df['High'] + df['Low'] + df['Close']) / 4
 
-# ATR(Average True Range)の計算
-price_diffs = [high - low, 
-               high - close.shift(), 
-               close.shift() - low]
-true_range = pd.concat(price_diffs, axis=1)
-true_range = true_range.abs().max(axis=1)
-atr = true_range.ewm(alpha = 1 / atr_period, min_periods = atr_period).mean() 
+# インデックスでソートする
+DF = df.sort_index(ascending = True)
 
-# 上下バンドの計算
-final_upperband = upperband = (high + low) / 2 + (atr_multiplier * atr)
-final_lowerband = lowerband = (high + low) / 2 - (atr_multiplier * atr)
-#print(final_upperband, final_lowerband)
+# 価格帯の最小と最大を算出
+min = int(DF['Ave'].min())
+max = int(DF['Ave'].max())
 
+# 階級の境界を算出
+my_classes = 21
+my_bins = np.arange(min, max, int((max-min)/my_classes))
 
-# スーパートレンドを図示するための処理
-# 上ラインは赤色、下ラインは緑で表記。さらに色塗りするため
+# 階級に分けて、カテゴリ列を作成する
+DF['Category'] = pd.cut(DF['Ave'], my_bins)
 
-supertrend = [True] * len(DF) # 一旦、Trueで埋める
-for i in range(1, len(DF.index)):
-    curr, prev = i, i-1
-    
-    if close[curr] > final_upperband[prev]:
-        supertrend[curr] = True
-    elif close[curr] < final_lowerband[prev]:
-        supertrend[curr] = False
-    # その他の場合は、既存トレンドを継続する
-    else:
-        supertrend[curr] = supertrend[prev]
-        if supertrend[curr] == True and final_lowerband[curr] < final_lowerband[prev]:
-            final_lowerband[curr] = final_lowerband[prev]
-        if supertrend[curr] == False and final_upperband[curr] > final_upperband[prev]:
-            final_upperband[curr] = final_upperband[prev]
-    
-    # トレンドでない方の列には、欠損値nanを代入（その区間は、図示させないための処理） 
-    if supertrend[curr] == True:
-        final_upperband[curr] = np.nan
-    else:
-        final_lowerband[curr] = np.nan
+#価格別出来高の計算
+my_sum = DF.groupby('Category').sum()
+#label_list = [str(i[0]) + 'a' + str(i[1]) for i in my_sum.index]
+label_list = [str(i) for i in my_sum.index]
 
-# 作成したデータをpandasデータフレームで作成する。        
-df_buf = pd.DataFrame({
-    'Supertrend': supertrend,
-    'Final Lowerband': final_lowerband,
-    'Final Upperband': final_upperband
-}, index=DF.index)
-# 元のデータフレームへ追記する
-DF = DF.join(df_buf)
-#print(DF)
-
+# 単純移動平均の計算
+my_days1 = 25
+my_days2 = 75
+my_days3 = 200
+simple_moving_average1 = pd.Series.rolling(DF['Close'], window=my_days1).mean()
+simple_moving_average2 = pd.Series.rolling(DF['Close'], window=my_days2).mean()
+simple_moving_average3 = pd.Series.rolling(DF['Close'], window=my_days3).mean()
 
 # グラフ化
-fig = plt.figure(figsize = (10, 6))
-ax = fig.add_subplot(111)
-plt.plot(DF.index, DF['Close'], c = 'k', label='Close Price')
-plt.plot(DF.index, DF['Final Lowerband'], c = 'lime', label = 'BUY')
-plt.plot(DF.index, DF['Final Upperband'], c = 'red', label = 'SELL')
+fig = plt.figure(figsize=(21,9))
 
-# 塗り潰し
-ax.fill_between(DF.index, DF['Close'], DF['Final Lowerband'], facecolor='lime', alpha=0.3)
-ax.fill_between(DF.index, DF['Close'], DF['Final Upperband'], facecolor='red', alpha=0.3)
+ax1 = fig.add_subplot(1, 2, 1)
+ax1.plot(DF['Close'], color="k", lw=3)
+ax1.set_ylabel('株価[￥]')
+ax1.plot(simple_moving_average1, color="r", lw=3, label="移動平均 {} 日".format(my_days1))
+ax1.plot(simple_moving_average2, color="y", lw=3, label="移動平均 {} 日".format(my_days2))
+ax1.plot(simple_moving_average3, color="b", lw=3, label="移動平均 {} 日".format(my_days3))
+ax1.legend()
 
-# 横軸を時間フォーマットにする
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b-%Y'))
-plt.gca().xaxis.set_minor_locator(mdates.MonthLocator(interval = 1))
-plt.gca().xaxis.set_major_locator(mdates.MonthLocator(interval = 3))
-plt.gcf().autofmt_xdate()
+# X軸目盛表記を調整する
+x_ticklabels = ax1.get_xticklabels() # デフォルトの目盛り表記をゲットする
+plt.setp(x_ticklabels, rotation=75) # 目盛り表記を90度回転。#フォントサイズの指定する場合 ,fontsize=16)
+tick_spacing = 180 # 目盛り表示する間隔(3か月=90日)
+ax1.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing)) # X軸目盛の表示間隔を間引く
+ax1.grid()
+ax1.set_title(f'{ticker_symbol}, {bland}')
 
-plt.ylabel('stock price [\]')
-plt.title(ticker_symbol)
-plt.legend(
-  bbox_to_anchor = (1.45, 0.85),
-)
-plt.grid()
-fig.tight_layout()
-#plt.show()
+ax2 = fig.add_subplot(1, 2, 2)
+ax2.barh(label_list, my_sum['Volume'], color="g")
+ax2.set_xlabel('出来高')
+ax2.set_ylabel('価格帯')
 st.pyplot(fig)
