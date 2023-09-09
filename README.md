@@ -7,6 +7,6 @@
 次のURLをクリックすると実行されます。  
 https://checkstockpricechart-kqdzrm9txwaqeubt4b3uls.streamlit.app/  
 
-# 補足事項
+# 備考
 株銘柄はランダムに選択されます。そのため、再読み込みする度に、表示される銘柄は異なります。
 
