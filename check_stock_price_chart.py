@@ -25,7 +25,7 @@ random_No = str(random.randint(1, N))
 data_df = df.iloc[int(random_No)]
 
 st.write("""
-### ■ランダムに選定した株の銘柄
+### ■ランダムに選択した株の銘柄
 """)
 st.table(data_df)
 
@@ -72,7 +72,7 @@ simple_moving_average1 = pd.Series.rolling(DF['Close'], window=my_days1).mean()
 simple_moving_average2 = pd.Series.rolling(DF['Close'], window=my_days2).mean()
 simple_moving_average3 = pd.Series.rolling(DF['Close'], window=my_days3).mean()
 
-##################################################### Prophetによるモデルの作成
+##################################################### Prophetによる予測モデルの作成
 DF2 = DF.copy()
 DF2['ds'] = DF2.index # 日付がインデックスにあるため、列にする
 DF2 = DF2.rename(columns={'Close': 'y'}) # 目的変数の名前をyに置換する
@@ -90,13 +90,13 @@ model = Prophet(
 ) 
 model.fit(DF2)
 
-###################################################### グラフ化
+###################################################### データの可視化
 fig = plt.figure(figsize=(21,9))
 
 # 株価チャートのグラフを描く
 ax1 = fig.add_axes([0.1, 0.1, 0.5, 0.8])  # [左端, 下端, 幅, 高さ]
 ax1.plot(DF['Close'], color="k", lw=3)
-ax1.set_ylabel('株価[￥]')
+ax1.set_ylabel('株価 [円]')
 ax1.plot(simple_moving_average1, color="r", lw=3, label="移動平均 {} 日".format(my_days1))
 ax1.plot(simple_moving_average2, color="y", lw=3, label="移動平均 {} 日".format(my_days2))
 ax1.plot(simple_moving_average3, color="b", lw=3, label="移動平均 {} 日".format(my_days3))
@@ -116,16 +116,14 @@ ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
 st.write("""
-### ■チャートと価格帯別の出来高
+### ■株価チャートと価格帯別の出来高
 """)
 st.pyplot(fig)
 
-
 ##### Prophetによる株価予測を図示
 st.write("""
-### ■Prophetによる株価予測
-※右端の黒点がないあたりが予測結果です。
-株価の予測についてはこれに限らず、鵜呑みにしないように注意ください。
+### ■Prophetを用いた株価予測
+※右端の黒点がないあたりが予測結果。一般的に株価の予測については、これに限らず鵜呑みにしないように注意ください。
 """)
 
 # 学習データに予測したい期間を追加する
@@ -134,6 +132,21 @@ future = model.make_future_dataframe(periods = 3, freq='M')
 # 予測する
 forecast = model.predict(future)
 
-# プロット
-fig2 = model.plot(forecast)
-st.pyplot(fig2)
+### グラフの作成
+plt.rcParams['font.size'] = 20 # グラフの基本フォントサイズの設定
+fig, ax = plt.subplots(figsize=(10,6))
+
+# グラフオブジェクトを取得
+fig = model.plot(forecast, ax=ax)
+
+# x軸の目盛間隔を分割
+ax.locator_params(axis='x', nbins=30)
+# x軸目盛を回転
+ax.tick_params(axis='x', rotation=60)
+
+# タイトル、ラベルの設定
+ax.set_title(f'{bland}：{ticker_symbol}')
+ax.set_xlabel('')
+ax.set_ylabel('株価 [円]')
+
+st.pyplot(fig)
