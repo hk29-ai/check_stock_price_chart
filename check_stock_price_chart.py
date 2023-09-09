@@ -34,7 +34,7 @@ random_No = str(random.randint(1, N))
 data_df = df.iloc[int(random_No)]
 
 st.write("""
-### ■1. ランダムに選択した株の銘柄
+### ■ランダムに選択した株の銘柄
 """)
 st.table(data_df)
 
@@ -107,7 +107,7 @@ ax2.barh(label_list, my_sum['Volume'], color="g")
 ax2.set_xlabel('出来高')
 ax2.set_ylabel('価格帯')
 st.write("""
-### ■2. チャートと価格帯別の出来高
+### ■チャートと価格帯別の出来高
 下図左は株価チャートで、移動平均線を計算してプロットしています。  下図右は出来高を価格帯別に算出して図示しています。
 """)
 st.pyplot(fig)
@@ -133,7 +133,7 @@ model.fit(DF2)
 
 #### データの可視化
 st.write("""
-### ■3. Prophetを用いた株価予測
+### ■Prophetを用いた株価予測
 時系列データ分析のPythonライブラリ「Prophet」による株価予測です。下図中の右端の黒点がないあたりが予測結果です。
 """)
 
@@ -254,8 +254,8 @@ future_pred = np.array(future_pred) * (max_value - min_value) + min_value
 
 ### データの可視化
 st.write("""
-### ■4. RNNによる株価予測
-Pythonライブラリ「keras」を用いて、RNNの1種であるLSTM（Long Short-Term Memory）による株価予測です。下図中の右端のピンクが未来予測です。
+### ■RNNによる株価予測
+Pythonライブラリ「keras」を用いたRNN（Recurrent Neural Network）による株価予測です。下図中の右端ピンクが未来予測です。
 """)
 fig, ax = plt.subplots(figsize=(10,6))
 # 訓練データ
