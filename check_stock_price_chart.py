@@ -217,8 +217,6 @@ model.fit(X_train, y_train, epochs=10, batch_size=32) # エポック数, バッ�
 # モデルの評価
 train_score = model.evaluate(X_train, y_train)
 test_score = model.evaluate(X_test, y_test)
-st.write("Train Score: {:.4f}".format(train_score))
-st.write("Test Score: {:.4f}".format(test_score))
 
 # 日付データの取得
 dates = df_close_normalize.index # 日付データがインデックスのため、取得
@@ -274,6 +272,9 @@ plt.ylabel('株価 [円]')
 plt.legend()
 plt.xticks(rotation=45)
 st.pyplot(fig)
+
+st.write("Train Score: {:.4f}".format(train_score))
+st.write("Test Score: {:.4f}".format(test_score))
 
 st.write("""
 ※一般的に株価の予測については、これらに限らず鵜呑みにしないように注意ください。
