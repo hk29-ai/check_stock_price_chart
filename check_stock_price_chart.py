@@ -479,14 +479,16 @@ def main():
                 my_percent += 1 / N
                 progress_txt.text(f'処理の進行状況 {round(my_percent * 100, 1)}%')
                 progress_bar.progress(my_percent)
-
+            
             st.write("""※一般的に、株価の予測についてはこれらに限らず鵜呑みにしないようにご注意ください。
                       株価の変動は外的要因とそれによって生じる心理的要因が大きいと思われます。
                       以上""")
+
+            # 全ての処理が完了したらバルーンで知らせる
+            st.balloons()
             
 if __name__ == "__main__":
     now = dt.datetime.now() # 今日の日付を取得する
     #st.write(now)
 
     main()
-
