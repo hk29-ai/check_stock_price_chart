@@ -337,43 +337,12 @@ def main():
         layout = "centered",
         initial_sidebar_state = "expanded"
     )
-    st.title("株価データ分析のwebアプリ")
     
-    # 全体の背景色を薄い青色にする。
-    page_bg_color = """
-    <style>
-        body {
-            background-color: #f0f8ff; /* アリスブルー */
-            color: #000000; /* 黒色 */
-        }
+    st.title("株価データ分析のwebアプリ")
 
-        .stApp {
-            color: #000000; /* 黒色 */
-        }
-
-        .stTitle {
-            color: #000000 !important; /* タイトルの文字色を強制的に黒に設定 */
-        }
-
-        .stSubtitle {
-            color: #000000 !important; /* サブタイトルの文字色を強制的に黒に設定 */
-        }
-
-        .stMarkdown h1,
-        .stMarkdown h2,
-        .stMarkdown h3,
-        .stMarkdown h4,
-        .stMarkdown h5,
-        .stMarkdown h6 {
-            color: #000000 !important; /* Markdownの見出しの文字色を強制的に黒に設定 */
-        }
-    </style>
-    """
-    st.markdown(page_bg_color, unsafe_allow_html=True)
-
-    # 背景色を灰色にした説明文
+    # 背景色を変更した説明文
     description = """
-    <div style="background-color: #fffdd0; padding: 10px; border-radius: 10px;">
+    <div style="background-color: #87CEFA; padding: 10px; border-radius: 10px;">
         <p style="font-weight: normal;">株の銘柄をランダム、もしくは入力によって指定して、次の４項目をデータ分析します。</p>
         <ul style="list-style-type: decimal; padding-left: 0; margin-bottom: 0; text-align: left;">
             <li style="font-weight: bold;">チャートと価格帯別の出来高</li>
