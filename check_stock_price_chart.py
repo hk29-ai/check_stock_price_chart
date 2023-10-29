@@ -343,7 +343,7 @@ def main():
     # 背景色を変更した説明文
     description = """
     <div style="background-color: #87CEFA; padding: 10px; border-radius: 10px;">
-        <p style="font-weight: normal;">株の銘柄をランダム、もしくは入力によって指定して、次の４項目をデータ分析します。</p>
+        <p style="font-weight: normal;">次の４項目をデータ分析します。</p>
         <ul style="list-style-type: decimal; padding-left: 0; margin-bottom: 0; text-align: left;">
             <li style="font-weight: bold;">チャートと価格帯別の出来高</li>
             <li style="font-weight: bold;">Prophetを用いた株価予測</li>
