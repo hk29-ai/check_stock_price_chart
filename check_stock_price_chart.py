@@ -94,7 +94,7 @@ def prophet_func(TICKER_SYMBOL, BLAND, DF):
     model.fit(DF)
 
     #### データの可視化
-    st.subheader('2. Prophetを用いた株価予測')
+    st.subheader('2. 時系列予測ライブラリ「Prophet」を用いた株価予測')
     st.write('時系列データ分析のPythonライブラリ「Prophet」による株価予測です。下図中の右端の黒点がないあたりが予測結果です。')
 
     # 学習データに予測したい期間を追加する
@@ -214,7 +214,7 @@ def rnn_func(TICKER_SYMBOL, BLAND, DF):
     future_pred = np.array(future_pred) * (max_value - min_value) + min_value
 
     ### データの可視化
-    st.subheader('3. RNNによる株価予測')
+    st.subheader('3. ニューラルネットワークによる株価予測')
     st.write('Pythonライブラリ「keras」を用いたRNN（Recurrent Neural Network）による株価予測です。下図中の右端ピンクが未来予測です。')
     fig, ax = plt.subplots(figsize=(10,6))
     # 訓練データ
@@ -343,7 +343,7 @@ def main():
     # 背景色を変更した説明文
     description = """
     <div style="background-color: #87CEFA; padding: 10px; border-radius: 10px;">
-        <p style="font-weight: normal;">次の４項目をデータ分析します。</p>
+        <p style="font-weight: normal;">次の４項目について実施します。</p>
         <ul style="list-style-type: decimal; padding-left: 0; margin-bottom: 0; text-align: left;">
             <li style="font-weight: bold;">チャートと価格帯別の出来高</li>
             <li style="font-weight: bold;">Prophetを用いた株価予測</li>
