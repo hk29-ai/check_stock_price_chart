@@ -339,12 +339,33 @@ def main():
     )
     st.title("株価データ分析のwebアプリ")
     
-    # 全体の背景色を薄い青色にする
+    # 全体の背景色を薄い青色にする。
     page_bg_color = """
     <style>
         body {
             background-color: #f0f8ff; /* アリスブルー */
             color: #000000; /* 黒色 */
+        }
+
+        .stApp {
+            color: #000000; /* 黒色 */
+        }
+
+        .stTitle {
+            color: #000000 !important; /* タイトルの文字色を強制的に黒に設定 */
+        }
+
+        .stSubtitle {
+            color: #000000 !important; /* サブタイトルの文字色を強制的に黒に設定 */
+        }
+
+        .stMarkdown h1,
+        .stMarkdown h2,
+        .stMarkdown h3,
+        .stMarkdown h4,
+        .stMarkdown h5,
+        .stMarkdown h6 {
+            color: #000000 !important; /* Markdownの見出しの文字色を強制的に黒に設定 */
         }
     </style>
     """
