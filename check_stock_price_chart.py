@@ -346,10 +346,6 @@ def main():
             background-color: #f0f8ff; /* アリスブルー */
             color: #000000; /* 黒色 */
         }
-        .stApp {
-            background-color: #f0f8ff; /* アリスブルー */
-            color: #000000; /* 黒色 */
-        }
     </style>
     """
     st.markdown(page_bg_color, unsafe_allow_html=True)
